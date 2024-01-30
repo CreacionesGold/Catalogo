@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "nombre": "Cargador 1",
+        "precio": 50000,
+        "imagen": "images/1.png"
+    },
+    {
+        "id": 2,
+        "nombre": "Cargador 2",
+        "precio": 50000,
+        "imagen": "images/2.png"
+    },
+    {
+        "id": 3,
+        "nombre": "Cargador 3",
+        "precio": 50000,
+        "imagen": "images/3.png"
+    },
+    {
+        "id": 4,
+        "nombre": "Cargador 4",
+        "precio": 50000,
+        "imagen": "images/4.png"
+    }
+]
