@@ -1,40 +1,29 @@
+// Variables
+function fetchJSONData() {
+    const request = new XMLHttpRequest();
+    request.open("GET", "./js/data.json", false);
+    request.send(null);
+    if (request.status === 200) {
+      return JSON.parse(request.responseText);
+    } else {
+      console.error("Unable to fetch data:", request.statusText);
+      throw new Error("Unable to fetch data");
+    }
+}
+
+function toggler(divId) {
+    $("#" + divId).toggle();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-
-    // Variables
-    const baseDeDatos = [
-        {
-            id: 1,
-            nombre: 'Cargador 1',
-            precio: 50000,
-            imagen: 'images/1.png'
-        },
-        {
-            id: 2,
-            nombre: 'Cargador 2',
-            precio: 50000,
-            imagen: 'images/2.png'
-        },
-        {
-            id: 3,
-            nombre: 'Cargador 3',
-            precio: 50000,
-            imagen: 'images/3.png'
-        },
-        {
-            id: 4,
-            nombre: 'Cargador 4',
-            precio: 50000,
-            imagen: 'images/4.png'
-        }
-
-    ];
+    const baseDeDatos = fetchJSONData();
+    console.log(baseDeDatos);
 
     let carrito = [];
     const divisa = '$';
     const DOMitems = document.querySelector('#items');
     const DOMcarrito = document.querySelector('#carrito');
-    const DOMtotal = document.querySelector('#total');
-    const DOMbotonVaciar = document.querySelector('#boton-vaciar');
+    const DOMItems = document.querySelector('#num-items');
     const miLocalStorage = window.localStorage;
 
     // Funciones
@@ -117,11 +106,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 0);
             // Creamos el nodo del item del carrito
             const miNodo = document.createElement('li');
-            miNodo.classList.add('list-group-item', 'text-right', 'mx-2');
-            miNodo.textContent = `${numeroUnidadesItem} x ${miItem[0].nombre} - ${miItem[0].precio}${divisa}`;
+            miNodo.classList.add('dropdown-item', 'text-right', 'mx-15');
+            miNodo.textContent = `${numeroUnidadesItem} x ${miItem[0].nombre} - ${divisa}${miItem[0].precio}`;
             // Boton de borrar
             const miBoton = document.createElement('button');
-            miBoton.classList.add('btn', 'btn-danger', 'mx-5');
+            miBoton.classList.add('btn', 'btn-outline-dark', 'mx-3');
             miBoton.textContent = 'X';
             miBoton.style.marginLeft = '1rem';
             miBoton.dataset.item = item;
@@ -130,8 +119,31 @@ document.addEventListener('DOMContentLoaded', () => {
             miNodo.appendChild(miBoton);
             DOMcarrito.appendChild(miNodo);
         });
+        const divider = document.createElement('li');
+        divider.classList.add('dropdown-divider');
+        DOMcarrito.appendChild(divider);
+        
+        const total = document.createElement('li');
+        const totalp = document.createElement('p');
+        totalp.classList.add('dropdown-item','text-right');
+        totalp.textContent = `Total: $ ${calcularTotal()}`;
+        total.appendChild(totalp);
+        DOMcarrito.appendChild(total);
+
+        const vaciar = document.createElement('li');
+        const vaciarBtn = document.createElement('button');
+        vaciarBtn.id = 'boton-vaciar'
+        vaciarBtn.classList.add('btn','btn-outline-dark','dropdown-item');
+        vaciarBtn.textContent = `Vaciar`;
+        vaciar.appendChild(vaciarBtn);
+        DOMcarrito.appendChild(vaciar);
+        
+        DOMItems.textContent = carrito.length; 
+        
+        vaciarBtn.addEventListener('click', vaciarCarrito);
+
         // Renderizamos el precio total en el HTML
-        DOMtotal.textContent = calcularTotal();
+        //DOMtotal.textContent = calcularTotal();
     }
 
     /**
@@ -163,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             // Los sumamos al total
             return total + miItem[0].precio;
-        }, 0).toFixed(2);
+        }, 0).toFixed(0);
     }
 
     /**
@@ -190,9 +202,6 @@ document.addEventListener('DOMContentLoaded', () => {
             carrito = JSON.parse(miLocalStorage.getItem('carrito'));
         }
     }
-
-    // Eventos
-    DOMbotonVaciar.addEventListener('click', vaciarCarrito);
 
     // Inicio
     cargarCarritoDeLocalStorage();
